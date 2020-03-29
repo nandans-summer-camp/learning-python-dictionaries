@@ -29,6 +29,9 @@
 # with just the scores for each player
 # (a list of ints)
 
+def get_scores(scoreboard):
+    return [s for p, s in scoreboard]
+
 
 #
 # 2)
@@ -36,6 +39,13 @@
 # that has one parameter, the scoreboard,
 # and returns an int, the highest score
 # on the scoreboard
+
+def top_score(scoreboard):
+    score = 0
+    for _, s in scoreboard:
+        if s > score:
+            score = s
+    return score
 
 
 #
@@ -45,6 +55,12 @@
 # and returns the player_name that has
 # the highest score
 
+def top_player(scoreboard):
+    teacher, score = scoreboard[0]
+    for t, s in scoreboard:
+        if s > score:
+            teacher, score = t, s
+    return teacher
 
 
 ######################################
@@ -77,7 +93,14 @@
 # and returns the player_name that has
 # the highest score
 
+def top_player_from_dict(scoreboard):
+    teacher = scoreboard[0]['player']
+    score = scoreboard[0]['score']
 
+    for s in scoreboard:
+        if s['score'] > score:
+            teacher, score = s['player'], s['score']
+    return teacher
 
 #
 # 5)
@@ -91,6 +114,8 @@
 # who have a score greater than or equal to
 # limit.
 
+def get_good_players(scoreboard, lim):
+    return [s['player'] for s in scoreboard if s['score'] >= lim]
 
 
 #
@@ -104,6 +129,15 @@
 # with the name of the player with the highest
 # score in the provided country.
 
+def _country_matches(a, b):
+    if b is None:
+        return True
+    return a == b
+
+def top_player_by_country(scoreboard, country):
+    scoreboard = [s for s in scoreboard
+                  if _country_matches(s['country'], country)]
+    return top_player_from_dict(scoreboard)
 
 
 #
@@ -114,7 +148,13 @@
 # the player that has played the most levels
 # and the number of levels they played
 
-
+def most_levels_played(scoreboard):
+    scoreboard = [(s['player'], len(s['levels'])) for s in scoreboard]
+    player, score = '', 0
+    for p, s in scoreboard:
+        if s > score:
+            player, score = p, s
+    return player, score
 
 #
 # 8)
@@ -125,6 +165,12 @@
 # played by any user.
 #
 # The list of levels can have duplicates.
+
+def played_levels(scoreboard):
+    levels = []
+    for s in scoreboard:
+        levels += s['levels']
+    return levels
 
 
 ######################################
@@ -144,7 +190,16 @@
 # so far:
 # dictionaries, lists, for loop, try/except
 
-
+def distinct(elements):
+    uniq = []
+    d = {}
+    for el in elements:
+        try:
+            d[el]
+        except KeyError:
+            uniq += [el]
+            d[el] = True
+    return uniq
 
 #
 # 10)
@@ -156,7 +211,8 @@
 # HINT: just use the two functions you've
 # already written!
 
-
+def distinct_played_levels(scoreboard):
+    return distinct(played_levels(scoreboard))
 
 #
 # 11)
@@ -178,3 +234,17 @@
 #
 # The "leaderboard" should be a dictionary.
 # See the test_exercises.py file for the format.
+
+def country_leaderboard(scoreboard):
+    leaderboard = {}
+
+    for s in scoreboard:
+        c, p, s = s['country'], s['player'], s['score']
+        try:
+            curr_score = leaderboard[c]['score']
+        except KeyError:
+            curr_score = None
+        if not curr_score or s > curr_score:
+            leaderboard[c] = {'player': p, 'score': s}
+
+    return leaderboard
