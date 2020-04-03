@@ -110,8 +110,9 @@
 # 7)
 # Create a function "most_levels_played"
 # that has one parameter: "scoreboard".
-# and returns a string with the name of
+# and returns a tuple (str, int) with the name of
 # the player that has played the most levels
+# and the number of levels they played
 
 
 
